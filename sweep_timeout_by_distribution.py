@@ -94,8 +94,8 @@ def main():
     fig, ax = plt.subplots(figsize=(8, 8))
 
     dist_style = {
-        "exponential": {"color": "#1f77b4", "marker": "o", "label": "Sim (Exponential)"},
-        "pareto":      {"color": "#d62728", "marker": "s", "label": "Sim (Pareto)"},
+        "exponential": {"color": "blue", "marker": "o", "label": "Simulation (Poisson)"},
+        "pareto":      {"color": "red", "marker": "s", "label": "Simulation (Pareto)"},
     }
 
     for dist_cfg in distributions:
@@ -118,7 +118,7 @@ def main():
         timers_dense,
         ana_delays,
         linestyle="-",
-        color="black",
+        color="green",
         linewidth=2.0,
         label="Analytical",
     )

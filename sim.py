@@ -123,6 +123,7 @@ class SDNSimulation:
         flow_timeout: float = 10.0,
         max_time: float = 100.0,
         variate_fn: Optional[Callable] = None,
+        deterministic_service: bool = False,
     ):
         self.lambda_rate = lambda_rate
         self.mu_switch = mu_switch
@@ -132,6 +133,8 @@ class SDNSimulation:
         self.max_time = max_time
         # variate_fn(mean) -> positive random sample with that mean
         self.variate_fn: Callable = variate_fn or _exponential_variate
+        # When True, switch and controller use constant 1/μ_s and 1/μ_c (used with Pareto arrivals)
+        self.deterministic_service = deterministic_service
 
         # Clock and event queue
         self.current_time = 0.0
@@ -222,7 +225,11 @@ class SDNSimulation:
             return
 
         self.switch_busy = True
-        service_time = self.variate_fn(1.0 / self.mu_switch)
+        service_time = (
+            1.0 / self.mu_switch
+            if self.deterministic_service
+            else self.variate_fn(1.0 / self.mu_switch)
+        )
         ev = Event(
             self.current_time + service_time,
             EventType.COMPLETE_SWITCH_PROCESS,
@@ -238,7 +245,11 @@ class SDNSimulation:
         if pkt is None:
             return
         self.controller_busy = True
-        proc = self.variate_fn(1.0 / self.mu_controller)
+        proc = (
+            1.0 / self.mu_controller
+            if self.deterministic_service
+            else self.variate_fn(1.0 / self.mu_controller)
+        )
         ev = Event(
             self.current_time + proc,
             EventType.COMPLETE_CONTROLLER_PROCESS,
@@ -471,6 +482,7 @@ def run_single_configuration(
         flow_timeout=timeout,
         max_time=sim_time,
         variate_fn=variate_fn,
+        deterministic_service=(dist == "pareto"),
     )
 
     sim.run_simulation()

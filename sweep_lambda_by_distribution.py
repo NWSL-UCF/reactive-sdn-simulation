@@ -79,7 +79,7 @@ def main():
     df.to_csv(csv_path, index=False)
 
     # -----------------------------
-    # Compute analytical curve (dense for smooth line)
+    # Compute analytical curve
     # -----------------------------
     lambdas_dense = np.linspace(0.1, 2.99, 500)
     ana_delays = [
@@ -88,24 +88,22 @@ def main():
     ]
 
     # -----------------------------
-    # Plotting: exponential markers, pareto markers, analytical line
+    # Plotting: Poisson, Pareto (markers only), Analytical (solid line)
     # -----------------------------
+    distributions_sorted = sorted(df["distribution"].unique())
     fig, ax = plt.subplots(figsize=(8, 8))
 
-    # --- Simulation data points (markers only, no connecting line) ---
     dist_style = {
-        "exponential": {"color": "#1f77b4", "marker": "o", "label": "Sim (Exponential)"},
-        "pareto":      {"color": "#d62728", "marker": "s", "label": "Sim (Pareto)"},
+        "exponential": {"color": "blue", "marker": "o", "label": "Simulation (Poisson)"},
+        "pareto":      {"color": "red", "marker": "s", "label": "Simulation (Pareto)"},
     }
 
-    for dist_cfg in distributions:
-        dist_name = dist_cfg["name"]
+    for dist_name in distributions_sorted:
+        sub = df[df["distribution"] == dist_name]
         s = dist_style[dist_name]
-        df_sub = df[df["distribution"] == dist_name]
-
         ax.plot(
-            df_sub["arrival_rate"],
-            df_sub["sim_total_delay"],
+            sub["arrival_rate"],
+            sub["sim_total_delay"],
             marker=s["marker"],
             linestyle="none",
             color=s["color"],
@@ -113,21 +111,20 @@ def main():
             label=s["label"],
         )
 
-    # --- Analytical curve (continuous solid line) ---
     ax.plot(
         lambdas_dense,
         ana_delays,
         linestyle="-",
-        color="black",
+        color="green",
         linewidth=2.0,
         label="Analytical",
     )
 
+    ax.set_yscale("log")
+    ax.tick_params(labelsize=16)
     ax.legend(fontsize=16, loc="upper left")
     ax.set_xlabel(r"$\lambda$, Arrival Rate (packets/s)", fontsize=16)
     ax.set_ylabel(r"$E[D]$, Average Delay (s)", fontsize=16)
-    ax.set_yscale("log")
-    ax.tick_params(labelsize=16)
     ax.grid(False)
     fig.tight_layout()
     fig.savefig(plot_path, format="pdf", bbox_inches="tight")
