@@ -8,8 +8,10 @@ Discrete-event simulation and analytical models for reactive SDN with idle flow 
 
 ## Example results
 
-- **Model validation**: `model_validation_result/delay_vs_arrival_rate.pdf` — simulated vs analytical average delay \(E[D]\) as a function of arrival rate λ for several idle timeouts Δ (shows the match between the simulator and the closed-form model).
-- **Traffic distribution impact**: `poisson_pareto_comparison_result/timeout.pdf` — average delay vs idle timeout Δ under different inter-arrival distributions (e.g., Poisson vs Pareto), illustrating how heavy tails change the optimal Δ* and delay curve shape.
+- **Model validation**  
+  [`model_validation_result/delay_vs_arrival_rate.pdf`](model_validation_result/delay_vs_arrival_rate.pdf) — simulated vs analytical average delay \(E[D]\) as a function of arrival rate λ for several idle timeouts Δ (shows the match between the simulator and the closed-form model).
+- **Traffic distribution impact**  
+  [`poisson_pareto_comparison_result/timeout.pdf`](poisson_pareto_comparison_result/timeout.pdf) — average delay vs idle timeout Δ under different inter-arrival distributions (e.g., Poisson vs Pareto), illustrating how heavy tails change the optimal Δ* and delay curve shape.
 
 ---
 
