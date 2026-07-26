@@ -156,6 +156,7 @@ class SDNSimulation:
 
         # Statistics
         self.packet_delays: List[float] = []
+        self.packet_delay_by_id: Dict[int, float] = {}
         self.miss_count = 0
         self.total_arrivals = 0
 
@@ -292,6 +293,7 @@ class SDNSimulation:
 
             delay = self.current_time - pkt.arrival_time
             self.packet_delays.append(delay)
+            self.packet_delay_by_id[packet_id] = delay
         else:
             self.miss_count += 1
 
@@ -347,6 +349,7 @@ class SDNSimulation:
 
         delay = self.current_time - pkt.arrival_time
         self.packet_delays.append(delay)
+        self.packet_delay_by_id[packet_id] = delay
 
         if fk in self.waiting_for_install:
             waiting_pids = self.waiting_for_install.pop(fk)
@@ -355,6 +358,7 @@ class SDNSimulation:
                 if wpkt:
                     delay_w = self.current_time - wpkt.arrival_time
                     self.packet_delays.append(delay_w)
+                    self.packet_delay_by_id[wpid] = delay_w
 
     def process_flow_timeout(self, flow_key: str):
         if flow_key in self.flow_table:
